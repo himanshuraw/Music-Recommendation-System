@@ -1,0 +1,6 @@
+
+ml_service/models/
+ml_service/__pycache__/
+ml_service/data
+
+ml_service/*.ipynb
