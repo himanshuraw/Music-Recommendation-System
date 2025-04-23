@@ -18,6 +18,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,8 @@ MODEL_DIR = os.getenv("MODEL_DIR", "./models")
 DATA_PATH = os.getenv("DATA_PATH", "./data/spotify_dataset.csv")
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 DB_NAME = "spotify_recsys"
+
+memory = joblib.Memory(MODEL_DIR, verbose=0)
 
 model = None
 user_to_idx = {}
@@ -51,6 +54,9 @@ async def lifespan(app: FastAPI):
     yield
     
     logger.info("Closing resources...")
+    global vectorizer, tfidf_matrix
+    vectorizer = None
+    tfidf_matrix = None
     client.close()
     logger.info("MongoDB connections closed")
 
@@ -73,6 +79,9 @@ async def load_or_train_model():
         logger.error(f"Model loading error: {str(e)}")
         raise
 
+    initialize_content_features() 
+    
+
 def train_model(use_mongo_data: bool = True):
     global model, user_to_idx, track_to_idx, item_user_matrix
     
@@ -84,8 +93,11 @@ def train_model(use_mongo_data: bool = True):
 
     if use_mongo_data:
         mongo_data = get_mongo_interactions()
+        mongo_data = mongo_data[['user_id', 'trackname', 'artistname']]
         df = pd.concat([df, mongo_data], ignore_index=True)
-        df = df.drop_duplicates(subset=['user_id', 'trackname'])
+    
+    df = df.dropna(subset=['user_id', 'trackname', 'artistname'])
+    df = df.drop_duplicates(subset=['user_id', 'trackname'])
 
     user_to_idx = {user: idx for idx, user in enumerate(df['user_id'].unique())}
     track_to_idx = {track: idx for idx, track in enumerate(df['trackname'].unique())}
@@ -98,12 +110,17 @@ def train_model(use_mongo_data: bool = True):
                          shape=(len(user_to_idx), len(track_to_idx)))
     item_user_matrix = user_item.T.tocsr()
 
-    model = implicit.als.AlternatingLeastSquares(
-        factors=64, 
-        iterations=20,
-        random_state=42
-    )
-    model.fit(item_user_matrix)
+    if model:
+        logger.info("Performing incremental training")
+        model.partial_fit(item_user_matrix)
+    else:
+        logger.info("Training new model")
+        model = implicit.als.AlternatingLeastSquares(
+            factors=64, 
+            iterations=20,
+            random_state=42
+        )
+        model.fit(item_user_matrix)
     
     save_model()
     logger.info("Model training completed successfully")
@@ -139,7 +156,7 @@ async def recommend(user_id: str, n: int = 10) -> Dict[str, Any]:
         logger.info(f"New user detected: {user_id}")
         return {
             "user_id": user_id,
-            "recommendations": get_cold_start_recommendations(n),
+            "recommendations": get_content_recommendations(n),
             "message": "Popular tracks for new user"
         }
     
@@ -171,8 +188,7 @@ def get_cold_start_recommendations(n: int = 10) -> list:
     popular_tracks = df['trackname'].value_counts().head(n).index.tolist()
     return [{"track": t, "score": 1.0} for t in popular_tracks]
 
-
-
+@memory.cache
 def initialize_content_features():
     """Precompute content features"""
     global track_metadata, vectorizer, tfidf_matrix
