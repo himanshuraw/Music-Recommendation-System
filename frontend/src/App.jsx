@@ -5,6 +5,8 @@ import Login from './components/Login'
 import Authentication from './layouts/Authentication'
 import Application from './layouts/Application'
 import Home from './pages/Home'
+import Register from './components/Register'
+import Playlist from './pages/Playlist'
 
 function App() {
 
@@ -14,10 +16,11 @@ function App() {
         <Routes>
           <Route element={<Authentication />}>
             <Route path="/login" element={<Login />} />
-            {/* <Route path="/register" element={<Register />} /> */}
+            <Route path="/register" element={<Register />} />
           </Route>
           <Route element={<Application />}>
             <Route path='/' element={<Home />} />
+            <Route path='/playlist' element={<Playlist />} />
           </Route>
         </Routes>
       </BrowserRouter>
