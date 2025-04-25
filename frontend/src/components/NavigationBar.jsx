@@ -12,6 +12,14 @@ const NavigationBar = () => {
                 to="/playlist"
                 text="Playlist"
             />
+            <NavigationLink
+                to="/login"
+                text="Login"
+            />
+            <NavigationLink
+                to="/register"
+                text="Register"
+            />
         </div>
     )
 }
