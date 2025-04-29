@@ -1,16 +1,18 @@
 import React from 'react'
 import { Outlet } from 'react-router';
-import NavigationBar from '../components/NavigationBar';
 
 const Authentication = () => {
     return (
         <>
-            {/* Remove NavigationBar later */}
-            <NavigationBar />
-            <div>Authentication</div>
-            <Outlet />
+            <div className='h-screen w-screen flex justify-end'>
+                <div className="p-20 border-l border-white/20 flex flex-col w-2/5">
+                    <Outlet />
+                </div>
+
+            </div>
         </>
     )
 }
 
 export default Authentication;
+

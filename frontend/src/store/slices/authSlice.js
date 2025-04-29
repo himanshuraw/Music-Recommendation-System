@@ -17,9 +17,22 @@ const loadInitialState = () => {
 const initialState = loadInitialState();
 
 export const login = createAsyncThunk(
-    'auth/login', async (credentials, { rejectWithValue }) => {
+    'auth/login',
+    async (credentials, { rejectWithValue }) => {
         try {
             const response = await publicAPI.post(`/login`, credentials);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data);
+        }
+    }
+)
+
+export const register = createAsyncThunk(
+    'auth/register',
+    async (userData, { rejectWithValue }) => {
+        try {
+            const response = await publicAPI.post('/register', userData);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -70,6 +83,23 @@ const authSlice = createSlice({
                 localStorage.setItem('user', JSON.stringify(action.payload.user));
             })
             .addCase(login.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+            .addCase(register.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(register.fulfilled, (state, action) => {
+                state.loading = false;
+                state.token = action.payload.token;
+                state.user = action.payload.user;
+
+                localStorage.setItem('token', action.payload.token);
+                localStorage.setItem('user', JSON.stringify(action.payload.user));
+            })
+            .addCase(register.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })

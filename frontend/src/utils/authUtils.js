@@ -1,6 +1,4 @@
 import { jwtDecode } from "jwt-decode"
-import { store } from "../store/store";
-import { logout } from "../store/slices/authSlice";
 
 export const isTokenExpired = (token) => {
     try {
@@ -13,18 +11,18 @@ export const isTokenExpired = (token) => {
     }
 }
 
-export const setAutoLogout = (token) => {
+export const setAutoLogout = (token, dispatch) => {
     try {
         const decoded = jwtDecode(token);
         const expiryTime = decoded.exp * 1000 - Date.now();
 
         if (expiryTime > 0) {
             setTimeout(() => {
-                store.dispatch(logout());
+                dispatch({ type: 'auth/logout' });
                 console.log("Auto-logout triggered (token expired)");
             }, expiryTime);
         }
     } catch {
-        store.dispatch(logout());
+        dispatch(logout());
     }
 }
