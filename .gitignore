@@ -4,3 +4,7 @@ ml_service/__pycache__/
 ml_service/data
 
 ml_service/*.ipynb
+
+node_modules/
+
+.env
