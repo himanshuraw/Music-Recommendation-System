@@ -6,10 +6,7 @@ const NavigationLink = ({ to, text }) => {
     const isActive = location.pathname === to;
     return (
         <Link to={to}>
-            {isActive
-                ? <div> --{text}-- </div>
-                : <div> {text} </div>
-            }
+            <div className={`${isActive ? "bg-blue-500 hover:bg-blue-600" : "border border-transparent hover:border-blue-600"} px-4 py-2 rounded-full`}>{text}</div>
         </Link>
     )
 }

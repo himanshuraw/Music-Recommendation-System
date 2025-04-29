@@ -3,7 +3,7 @@ import NavigationLink from './NavigationLink';
 
 const NavigationBar = () => {
     return (
-        <div style={{ display: 'flex', gap: '20px' }}>
+        <div className='flex gap-10 w-screen text-xl py-6 px-14 justify-end'>
             <NavigationLink
                 to="/"
                 text="Home"
@@ -11,14 +11,6 @@ const NavigationBar = () => {
             <NavigationLink
                 to="/playlist"
                 text="Playlist"
-            />
-            <NavigationLink
-                to="/login"
-                text="Login"
-            />
-            <NavigationLink
-                to="/register"
-                text="Register"
             />
         </div>
     )
