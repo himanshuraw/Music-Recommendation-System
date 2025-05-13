@@ -1,17 +1,17 @@
 const router = require('express').Router();
 const axios = require('axios');
 const User = require('../models/User');
+const { auth } = require('../middleware/auth');
 
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
 
 
-router.get('/recommend/:username', async (request, response) => {
-    const username = request.params.username;
-    const n = parseInt(request.query.n, 10) || 10;
-    try {
-        const user = await User.findOne({ username });
+router.get('/recommend', auth, async (request, response) => {
+    const n = parseInt(request.query.n, 10) || 16;
 
-        const userid = user._id;
+    try {
+        const userid = request.user._id;
+        console.log(request.user);
 
         const mlResponse = await axios.get(`${ML_SERVICE_URL}/recommend/${userid}`, {
             params: { n }
@@ -19,11 +19,7 @@ router.get('/recommend/:username', async (request, response) => {
 
         return response
             .status(200)
-            .json({
-                success: true,
-                data: mlResponse.data,
-                source: 'ml service'
-            });
+            .json(mlResponse.data);
 
     } catch (error) {
         return handleRecommendationError(error, response);
