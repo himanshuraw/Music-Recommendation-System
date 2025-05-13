@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan')
 const userRoute = require('./routes/user.route')
+const mlRoute = require('./routes/ml.route')
 
 require('dotenv').config();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.use('/user', userRoute)
+app.use('/ml', mlRoute)
 
 mongoose.connect(process.env.MONGODB_URI);
 const db = mongoose.connection;
