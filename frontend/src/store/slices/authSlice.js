@@ -8,7 +8,7 @@ const loadInitialState = () => {
 
     return {
         token: !!token,
-        user: user ? JSON.parse(user) : null,
+        user: user && user !== 'undefined' ? JSON.parse(user) : null,
         loading: false,
         error: null
     }
@@ -20,7 +20,8 @@ export const login = createAsyncThunk(
     'auth/login',
     async (credentials, { rejectWithValue }) => {
         try {
-            const response = await publicAPI.post(`/login`, credentials);
+            const response = await publicAPI.post(`/user/login`, credentials);
+            console.log(response.data)
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
@@ -32,7 +33,7 @@ export const register = createAsyncThunk(
     'auth/register',
     async (userData, { rejectWithValue }) => {
         try {
-            const response = await publicAPI.post('/register', userData);
+            const response = await publicAPI.post('/user/register', userData);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);

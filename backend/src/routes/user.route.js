@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const User = require('../models/User');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 router.get('/', async (request, response) => {
     return response.json({ message: "User router is working" })
@@ -68,7 +70,18 @@ router.post('/login', async (request, response) => {
         const userResponse = user.toObject();
         delete userResponse.password;
 
-        return response.status(200).json(userResponse);
+        const token = jwt.sign({
+            id: user._id,
+            username: user.username
+        },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' }
+        );
+
+        return response.status(200).json({
+            user: userResponse,
+            token,
+        });
 
     } catch (error) {
         return response.status(500).json({ error: error.message });
