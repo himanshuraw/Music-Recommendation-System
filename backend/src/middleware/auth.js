@@ -10,7 +10,6 @@ const auth = async (request, response, next) => {
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decoded)
         request.user = decoded;
         next();
 
