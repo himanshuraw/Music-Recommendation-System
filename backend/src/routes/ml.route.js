@@ -3,6 +3,8 @@ const axios = require('axios');
 const User = require('../models/User');
 const { auth } = require('../middleware/auth');
 const Like = require('../models/Like');
+const UserIdMapping = require('../models/UserIdMapping');
+const { default: mongoose } = require('mongoose');
 
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
 
@@ -13,7 +15,16 @@ router.get('/recommend', auth, async (request, response) => {
     try {
         const userid = request.user.id;
 
-        const mlResponse = await axios.get(`${ML_SERVICE_URL}/recommend/${userid}`, {
+        const mapping = await UserIdMapping.findOne({ mongo_user_id: new mongoose.Types.ObjectId(userid) });
+        console.log(mapping)
+
+        numericalUserId = userid;
+
+        if (mapping) {
+            numericalUserId = mapping.numerical_user_id;
+        }
+
+        const mlResponse = await axios.get(`${ML_SERVICE_URL}/recommend/${numericalUserId}`, {
             params: { n }
         });
 
