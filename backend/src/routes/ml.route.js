@@ -10,8 +10,7 @@ router.get('/recommend', auth, async (request, response) => {
     const n = parseInt(request.query.n, 10) || 16;
 
     try {
-        const userid = request.user._id;
-        console.log(request.user);
+        const userid = request.user.id;
 
         const mlResponse = await axios.get(`${ML_SERVICE_URL}/recommend/${userid}`, {
             params: { n }
