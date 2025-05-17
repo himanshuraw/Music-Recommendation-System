@@ -7,4 +7,6 @@ ml_service/*.ipynb
 
 node_modules/
 
+data/*
+
 .env
