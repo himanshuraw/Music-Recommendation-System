@@ -1,0 +1,6 @@
+---
+image_name: username/frontend
+image_tag: latest
+container_name: frontend
+host_port: 5173
+container_port: 5173

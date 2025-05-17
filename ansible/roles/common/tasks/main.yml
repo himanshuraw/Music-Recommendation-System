@@ -1,0 +1,13 @@
+---
+- name: Installing required packages
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - docker.io
+    - python3-pip
+
+- name: Install Docker Python module
+  pip:
+    name: docker
