@@ -8,3 +8,4 @@ ml_service/*.ipynb
 node_modules/
 
 .env
+backend/.env
