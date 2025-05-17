@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 # 3. Install dependencies
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci 
 
 # 4. Copy source
 COPY . .
@@ -16,4 +16,4 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 # 6. Start the app
-CMD ["node", "app.js"]
+CMD ["node", "src/app.js"]
