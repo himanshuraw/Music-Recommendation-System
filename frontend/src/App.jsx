@@ -6,7 +6,6 @@ import Authentication from './layouts/Authentication'
 import Application from './layouts/Application'
 import Home from './pages/Home'
 import Register from './components/Register'
-import Playlist from './pages/Playlist'
 
 function App() {
 
@@ -20,7 +19,6 @@ function App() {
           </Route>
           <Route element={<Application />}>
             <Route path='/' element={<Home />} />
-            <Route path='/playlist' element={<Playlist />} />
           </Route>
         </Routes>
       </BrowserRouter>
