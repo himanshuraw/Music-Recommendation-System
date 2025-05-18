@@ -12,6 +12,10 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    depends_on:
+      logstash:
+        condition: service_healthy
+
 
   frontend:
     build: ./frontend
@@ -21,7 +25,9 @@ services:
     - app-network
     depends_on:
     - backend
+    - logstash
     restart: unless-stopped
+
 
   ml_service:
     build: ./ml_service
@@ -34,10 +40,65 @@ services:
       - "8000:8000"
     networks:
       - app-network
+    depends_on:
+      - logstash
+
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: logstash
+    volumes:
+      - ./elk/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - "5044:5044"
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-network
+    environment:
+      LS_JAVA_OPTS: "-Xmx1g -Xms1g"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    volumes:
+      - kibanadata:/usr/share/kibana/data
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-network
 
 volumes:
   ml_service_data:
   ml_service_models:
+  esdata:
+  kibanadata:
 
 networks:
   app-network:
