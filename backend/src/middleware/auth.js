@@ -9,6 +9,10 @@ const auth = async (request, response, next) => {
         })
     }
     try {
+        if (!process.env.JWT_SECRET) {
+            console.error('❌  Missing JWT_SECRET environment variable');
+            process.exit(1);
+        }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         request.user = decoded;
         next();

@@ -19,6 +19,10 @@ app.use('/user', userRoute);
 app.use('/ml', mlRoute);
 app.use('/like', likeRoute);
 
+if (!process.env.MONGODB_URI) {
+  console.error('❌  Missing MONGODB_URI environment variable');
+  process.exit(1);
+}
 mongoose.connect(process.env.MONGODB_URI);
 const db = mongoose.connection;
 
