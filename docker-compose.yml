@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    env_file:
+      - ./backend/.env  # Load backend environment variables
+    environment:
+      - NODE_ENV=production  # Hardcoded production flag
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+    - "80:80"
+    networks:
+    - app-network
+    depends_on:
+    - backend
+    restart: unless-stopped
+
+  ml_service:
+    build: ./ml_service
+    env_file:
+      - ./ml_service/.env  # Load ML service environment variables
+    volumes:
+      - ml_service_data:/app/data
+      - ml_service_models:/app/models
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+
+volumes:
+  ml_service_data:
+  ml_service_models:
+
+networks:
+  app-network:
+    driver: bridge
