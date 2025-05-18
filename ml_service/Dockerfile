@@ -21,9 +21,9 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install runtime dependencies
+# Install runtime dependencies including gosu
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libgomp1 && \
+    apt-get install -y --no-install-recommends libgomp1 gosu && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy virtual environment from builder
@@ -37,26 +37,23 @@ COPY entrypoint.sh .
 COPY data/ /app/build_data/
 COPY models/ /app/build_models/
 
-# Declare mount points so that Compose sees the volumes in image metadata
+# Declare mount points
 VOLUME ["/app/data", "/app/models"]
 
-# Create directories that will be volume-mounted (fallback)
+# Create directories (ownership handled in entrypoint)
 RUN mkdir -p /app/data /app/models
 
-# Set permissions and switch to non-root user
+# Set permissions and add non-root user
 RUN chmod +x /app/entrypoint.sh && \
-    adduser --disabled-password --gecos "" appuser && \
-    chown -R appuser:appuser /app
-
-USER appuser
+    adduser --disabled-password --gecos "" appuser
 
 # Set environment variables
 ENV PATH="/opt/venv/bin:$PATH"
 
 EXPOSE 8000
 
-# Use entrypoint script that will handle volume initialization
+# Use entrypoint script to handle setup
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-# Default command (can be overridden in docker-compose)
+# Default command
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
