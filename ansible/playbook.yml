@@ -1,0 +1,8 @@
+- name: Deploy container stack
+  hosts: containers
+  become: true
+  roles:
+    - common
+    - frontend
+    - backend
+    - ml_service

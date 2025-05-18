@@ -1,0 +1,6 @@
+---
+image_name: username/ml_service
+image_tag: latest
+container_name: ml_service
+host_port: 8000
+container_port: 8000

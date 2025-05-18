@@ -1,0 +1,6 @@
+---
+image_name: username/backend
+image_tag: latest
+container_name: backend
+host_port: 5173
+container_port: 5173
