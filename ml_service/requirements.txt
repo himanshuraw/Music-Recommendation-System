@@ -12,3 +12,4 @@ tenacity>=8.0.1
 python-multipart>=0.0.5
 json-log-formatter==0.5.2
 python-json-logger==2.0.7
+python-logstash==0.4.8 
