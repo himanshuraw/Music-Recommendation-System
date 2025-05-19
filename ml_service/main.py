@@ -96,6 +96,7 @@ async def lifespan(app: FastAPI):
     client.close()
     logger.info("MongoDB connections closed")
 
+
 app = FastAPI(lifespan=lifespan)
 
 # Middleware for request logging

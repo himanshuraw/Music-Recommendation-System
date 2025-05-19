@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   backend:
-    build: ./backend
+    image: himanshuraw/musicrecommendationsystem_backend:latest
     env_file:
       - ./backend/.env  # Load backend environment variables
     environment:
@@ -18,7 +18,7 @@ services:
 
 
   frontend:
-    build: ./frontend
+    image: himanshuraw/musicrecommendationsystem_frontend:latest
     ports:
     - "80:80"
     networks:
@@ -30,7 +30,7 @@ services:
 
 
   ml_service:
-    build: ./ml_service
+    image: himanshuraw/musicrecommendationsystem_ml_service:latest
     env_file:
       - ./ml_service/.env  # Load ML service environment variables
     volumes:
