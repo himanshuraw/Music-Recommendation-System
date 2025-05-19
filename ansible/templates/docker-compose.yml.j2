@@ -3,14 +3,14 @@ services:
   backend:
     image: naman906/music-recommendation-system-backend:latest
     environment:
-      PORT:           "3000"
-      MONGODB_URI:    "mongodb+srv://Himanshuraw:81mansh0@freecluster.bvcym.mongodb.net/?retryWrites=true&w=majority&appName=FreeCluster"
-      SALT_ROUNDS:    "10"
-      JWT_SECRET:     "secretnottobeshared"
-      ML_SERVICE_URL: "http://ml_service:8000"
+      PORT:           "{{ db_port }}"
+      MONGODB_URI:    "{{ mongodb_uri }}"
+      SALT_ROUNDS:    "{{ salt_rounds }}"
+      JWT_SECRET:     "{{ jwt_secret }}"
+      ML_SERVICE_URL: "{{ ml_service_url }}"
       NODE_ENV:       "production"
     ports:
-      - "3000:3000"
+      - "{{ db_port }}:{{ db_port }}"
     networks:
       - app-network
     restart: unless-stopped
@@ -28,9 +28,9 @@ services:
   ml_service:
     image: naman906/music-recommendation-system-ml_service:latest
     environment:
-      MONGODB_URI: "mongodb+srv://Himanshuraw:81mansh0@freecluster.bvcym.mongodb.net/?retryWrites=true&w=majority&appName=FreeCluster"
-      DATA_PATH:   "./data/transformed_data.csv"
-      MODEL_DIR:   "./models"
+      MONGODB_URI: "{{ mongodb_uri }}"
+      DATA_PATH:   "{{ data_path }}"
+      MODEL_DIR:   "{{ model_dir }}"
     volumes:
       - ml_service_data:/app/data
       - ml_service_models:/app/models

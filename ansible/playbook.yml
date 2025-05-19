@@ -1,8 +1,53 @@
-- name: Deploy container stack
+---
+- name: Prepare app stack configuration
   hosts: containers
   become: true
+  vars:
+    compose_project_src: "{{ playbook_dir | dirname }}"
+    auto_manage_containers: false  # Set to true if you want Ansible to handle containers
+
   roles:
     - common
-    - frontend
     - backend
+    - frontend
     - ml_service
+
+  tasks:
+    - name: Render docker-compose.yml from template
+      template:
+        src: "{{ playbook_dir }}/templates/docker-compose.yml.j2"
+        dest: "{{ compose_project_src }}/docker-compose.yml"
+        mode: '0644'
+      notify: display_manual_instructions
+
+    - name: "[TEARDOWN] Remove existing containers and orphans"
+      community.docker.docker_compose_v2:
+        project_src: "{{ compose_project_src }}"
+        state: absent
+        remove_orphans: yes
+        remove_volumes: no  # Preserve your data volumes
+      when: auto_manage_containers | bool
+      tags: teardown
+
+    - name: "[OPTIONAL] Pull latest images"
+      community.docker.docker_image:
+        name: "{{ item }}"
+        source: pull
+      loop:
+        - naman906/music-recommendation-system-backend:latest
+        - naman906/music-recommendation-system-frontend:latest
+        - naman906/music-recommendation-system-ml_service:latest
+      when: auto_manage_containers | bool
+      tags: pull
+
+  handlers:
+    - name: display_manual_instructions
+      debug:
+        msg: |
+          SETUP COMPLETE!
+          
+          To start containers manually:
+          cd {{ compose_project_src }} && docker-compose up -d
+          
+          To tear down existing containers:
+          cd {{ compose_project_src }} && docker-compose down

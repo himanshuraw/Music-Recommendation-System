@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ml-service
-          image: himanshuraw/musicrecommendationsystem_ml_service:latest # Replace with your built image
+          image: naman906/music-recommendation-system-ml_service:latest
           envFrom:
             - configMapRef:
                 name: ml-config
