@@ -35,10 +35,10 @@ spec:
   selector:
     app: frontend
   ports:
-    - protocol: TCP
-      port: 80
+    - port: 80
       targetPort: 80
-  type: LoadBalancer # For external access
+      nodePort: 30001
+  type: NodePort
 
 ---
 apiVersion: autoscaling/v2
