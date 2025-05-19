@@ -15,9 +15,9 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-app.use('/user', userRoute);
-app.use('/ml', mlRoute);
-app.use('/like', likeRoute);
+app.use('/api/user', userRoute);
+app.use('/api/ml', mlRoute);
+app.use('/api/like', likeRoute);
 
 if (!process.env.MONGODB_URI) {
   console.error('❌  Missing MONGODB_URI environment variable');
@@ -32,5 +32,5 @@ db.once('open', () => console.log('Connected to Database'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 })
