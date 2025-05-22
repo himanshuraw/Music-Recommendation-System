@@ -1,0 +1,49 @@
+
+services:
+  backend:
+    image: naman906/music-recommendation-system-backend:latest
+    environment:
+      PORT:           "3000"
+      MONGODB_URI:    "mongodb+srv://Himanshuraw:81mansh0@freecluster.bvcym.mongodb.net/?retryWrites=true&w=majority&appName=FreeCluster"
+      SALT_ROUNDS:    "10"
+      JWT_SECRET:     "secretnottobeshared"
+      ML_SERVICE_URL: "http://ml_service:8000"
+      NODE_ENV:       "production"
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  frontend:
+    image: naman906/music-recommendation-system-frontend:latest
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  ml_service:
+    image: naman906/music-recommendation-system-ml_service:latest
+    environment:
+      MONGODB_URI: "mongodb+srv://Himanshuraw:81mansh0@freecluster.bvcym.mongodb.net/?retryWrites=true&w=majority&appName=FreeCluster"
+      DATA_PATH:   "./data/transformed_data.csv"
+      MODEL_DIR:   "./models"
+    volumes:
+      - ml_service_data:/app/data
+      - ml_service_models:/app/models
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  ml_service_data:
+  ml_service_models:
+
+networks:
+  app-network:
+    driver: bridge

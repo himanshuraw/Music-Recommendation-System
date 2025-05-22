@@ -1,0 +1,49 @@
+
+services:
+  backend:
+    image: naman906/music-recommendation-system-backend:latest
+    environment:
+      PORT:           "{{ db_port }}"
+      MONGODB_URI:    "{{ mongodb_uri }}"
+      SALT_ROUNDS:    "{{ salt_rounds }}"
+      JWT_SECRET:     "{{ jwt_secret }}"
+      ML_SERVICE_URL: "{{ ml_service_url }}"
+      NODE_ENV:       "production"
+    ports:
+      - "{{ db_port }}:{{ db_port }}"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  frontend:
+    image: naman906/music-recommendation-system-frontend:latest
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  ml_service:
+    image: naman906/music-recommendation-system-ml_service:latest
+    environment:
+      MONGODB_URI: "{{ mongodb_uri }}"
+      DATA_PATH:   "{{ data_path }}"
+      MODEL_DIR:   "{{ model_dir }}"
+    volumes:
+      - ml_service_data:/app/data
+      - ml_service_models:/app/models
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  ml_service_data:
+  ml_service_models:
+
+networks:
+  app-network:
+    driver: bridge

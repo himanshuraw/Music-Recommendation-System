@@ -1,0 +1,12 @@
+---
+# Docker installation settings
+docker_packages:
+  - docker.io
+  - docker-compose-plugin
+
+# Docker user configuration
+docker_user: "{{ ansible_user | default('ubuntu') }}"
+
+# Docker Compose project settings
+compose_project_src: "{{ playbook_dir | dirname }}"
+compose_file_name: "docker-compose.yml"
