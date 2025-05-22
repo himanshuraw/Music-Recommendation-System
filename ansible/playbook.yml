@@ -1,7 +1,7 @@
 ---
 - name: Prepare app stack configuration
   hosts: containers
-  # become: true
+  become: true
   vars:
     compose_project_src: "{{ playbook_dir | dirname }}"
     auto_manage_containers: false # Set to true if you want Ansible to handle containers
