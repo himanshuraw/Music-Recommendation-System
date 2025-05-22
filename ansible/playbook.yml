@@ -34,9 +34,9 @@
         name: "{{ item }}"
         source: pull
       loop:
-        - naman906/music-recommendation-system-backend:latest
-        - naman906/music-recommendation-system-frontend:latest
-        - naman906/music-recommendation-system-ml_service:latest
+        - himanshuraw/backend:latest
+        - himanshuraw/backend:latest
+        - himanshuraw/backend:latest
       when: auto_manage_containers | bool
       tags: pull
 
