@@ -48,7 +48,7 @@ pipeline {
                         chmod 600 "$VAULT_PASS_FILE"
 
                         ansible-playbook -i ansible/inventory.ini ansible/playbook.yml \
-                            --private-key=$SSH_KEY --vault-password-file="$VAULT_PASS_FILE"
+                            --private-key="SSH_KEY" --vault-password-file="$VAULT_PASS_FILE"
 
                         rm -f "$VAULT_PASS_FILE"
                     '''
