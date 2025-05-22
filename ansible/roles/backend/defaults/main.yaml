@@ -1,3 +1,3 @@
 ---
-backend_image: "naman906/music-recommendation-system-backend:latest"
+backend_image: "himanshuraw/backend:latest"
 backend_port: "3000:3000"

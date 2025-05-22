@@ -1,3 +1,4 @@
 ---
-frontend_image: "naman906/music-recommendation-system-frontend:latest"
+# frontend_image: "naman906/music-recommendation-system-frontend:latest"
+frontend_image: "himanshuraw/frontend:latest"
 frontend_port: "80:80"
