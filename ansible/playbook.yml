@@ -1,10 +1,10 @@
 ---
 - name: Prepare app stack configuration
   hosts: containers
-  become: true
+  # become: true
   vars:
     compose_project_src: "{{ playbook_dir | dirname }}"
-    auto_manage_containers: false  # Set to true if you want Ansible to handle containers
+    auto_manage_containers: false # Set to true if you want Ansible to handle containers
 
   roles:
     - common
@@ -17,7 +17,7 @@
       template:
         src: "{{ playbook_dir }}/templates/docker-compose.yml.j2"
         dest: "{{ compose_project_src }}/docker-compose.yml"
-        mode: '0644'
+        mode: "0644"
       notify: display_manual_instructions
 
     - name: "[TEARDOWN] Remove existing containers and orphans"
@@ -25,7 +25,7 @@
         project_src: "{{ compose_project_src }}"
         state: absent
         remove_orphans: yes
-        remove_volumes: no  # Preserve your data volumes
+        remove_volumes: no # Preserve your data volumes
       when: auto_manage_containers | bool
       tags: teardown
 
@@ -45,9 +45,9 @@
       debug:
         msg: |
           SETUP COMPLETE!
-          
+
           To start containers manually:
           cd {{ compose_project_src }} && docker-compose up -d
-          
+
           To tear down existing containers:
           cd {{ compose_project_src }} && docker-compose down
