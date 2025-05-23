@@ -1,3 +1,12 @@
+- name: Install Docker (if not using another driver)
+  apt:
+    name:
+      - docker.io
+      - docker-compose
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
 - name: Install kubectl
   get_url:
     url: https://storage.googleapis.com/kubernetes-release/release/v1.29.0/bin/linux/amd64/kubectl
@@ -9,6 +18,18 @@
     url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
     dest: /usr/local/bin/minikube
     mode: "0755"
+
+- name: Start Minikube cluster
+  command: minikube start --driver=docker
+  register: minikube_start
+  changed_when: "'Done!' in minikube_start.stdout"
+  environment:
+    KUBECONFIG: "{{ kubeconfig_path }}"
+
+- name: Wait for Minikube to be ready
+  wait_for:
+    path: "{{ kubeconfig_path }}"
+    timeout: 60
 
 - name: Apply Kubernetes manifests in order
   kubernetes.core.k8s:
