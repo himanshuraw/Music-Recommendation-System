@@ -89,7 +89,7 @@ pipeline {
 
                         ansible-playbook -i ansible/inventory.ini ansible/playbook-k8s.yml \
                             --private-key="$SSH_KEY" --vault-password-file="$VAULT_PASS_FILE"\
-                            --extra-vars "kubeconfig_path=$KUBECONFIG_FILE"
+                            --extra-vars "kubeconfig_path='$KUBECONFIG_FILE'"
 
                         rm -f "$VAULT_PASS_FILE"
                     '''
