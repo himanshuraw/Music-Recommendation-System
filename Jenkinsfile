@@ -47,7 +47,7 @@ pipeline {
                         echo "$VAULT_PASS" > "$VAULT_PASS_FILE"
                         chmod 600 "$VAULT_PASS_FILE"
 
-                        ansible-playbook -i ansible/inventory.ini ansible/playbook.yml \
+                        ansible-playbook -i ansible/inventory.ini ansible/playbook-compose.yml \
                             --private-key="SSH_KEY" --vault-password-file="$VAULT_PASS_FILE"
 
                         rm -f "$VAULT_PASS_FILE"
@@ -73,18 +73,13 @@ pipeline {
                 expression { return params.RUN_K8S }
             }
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig-secret-file', variable: 'KUBECONFIG_FILE')]) {
+                withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG_FILE')]) {
                     sh '''
                         echo "Deploying to Kubernetes..."
-                        export KUBECONFIG=$KUBECONFIG_FILE
-
-                        kubectl apply -f k8s/backend.yml
-                        kubectl apply -f k8s/frontend.yml
-                        kubectl apply -f k8s/ml_service.yml
-                        kubectl apply -f k8s/elasticsearch.yml
-                        kubectl apply -f k8s/kibana.yml
-                        kubectl apply -f k8s/logstash.yml
-                        kubectl apply -f k8s/pv.yaml
+                        export ANSIBLE_HOST_KEY_CHECKING=False
+                        export KUBECONFIG="$KUBECONFIG_FILE"
+                        ansible-playbook -i ansible/inventory-k8s.ini ansible/playbook-k8s.yml \
+                            --private-key="SSH_KEY"
                     '''
                 }
             }

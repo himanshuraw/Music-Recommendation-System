@@ -1,0 +1,21 @@
+---
+- name: Deploy using Kubernetes
+  hosts: all
+  became: yes
+  vars_file:
+    - vault.yml
+  vars:
+    k8s_dir: "{{ playbook_dir }}/../k8s"
+    kubeconfig_path: "{{ lookup('env', 'KUBECONFIG') }}"
+    manifest_order:
+      - secrets.yaml
+      - configmaps.yml
+      - pv.yml
+      - ml_service.yml
+      - backend.yml
+      - frontend.yml
+      - logstash.yml
+      - elasticsearch.yml
+      - kibana.yml
+  roles:
+    - k8s
