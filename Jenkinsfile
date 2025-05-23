@@ -87,7 +87,7 @@ pipeline {
                         echo "$VAULT_PASS" > "$VAULT_PASS_FILE"
                         chmod 600 "$VAULT_PASS_FILE"
 
-                        ansible-playbook -i ansible/inventory-k8s.ini ansible/playbook-k8s.yml \
+                        ansible-playbook -i ansible/inventory.ini ansible/playbook-k8s.yml \
                             --private-key="$SSH_KEY" --vault-password-file="$VAULT_PASS_FILE"
 
                         rm -f "$VAULT_PASS_FILE"
