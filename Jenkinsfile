@@ -87,6 +87,10 @@ pipeline {
                         echo "$VAULT_PASS" > "$VAULT_PASS_FILE"
                         chmod 600 "$VAULT_PASS_FILE"
 
+                        echo "Copying kubeconfig to target host..."
+                        scp -i "$SSH_KEY" -o StrictHostKeyChecking=no "$KUBECONFIG_FILE" ansible_user@target_host:/tmp/kubeconfig
+
+
                         ansible-playbook -i ansible/inventory.ini ansible/playbook-k8s.yml \
                             --private-key="$SSH_KEY" --vault-password-file="$VAULT_PASS_FILE"
 

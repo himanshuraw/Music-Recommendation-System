@@ -5,12 +5,13 @@
     mode: "0700"
     owner: "{{ ansible_user_id }}"
 
-- name: Touch and set perms on kubeconfig
-  file:
-    path: "/home/{{ ansible_user_id }}/.kube/config"
-    state: touch
-    mode: "0600"
+- name: Copy Jenkins-provided kubeconfig to ~/.kube/config
+  copy:
+    src: "{{ kubeconfig_path }}"
+    dest: "/home/{{ ansible_user_id }}/.kube/config"
+    remote_src: yes
     owner: "{{ ansible_user_id }}"
+    mode: "0600"
 
 - name: Install Docker
   apt:
