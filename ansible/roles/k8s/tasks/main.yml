@@ -5,12 +5,12 @@
     mode: "0700"
     owner: "{{ ansible_user_id }}"
 
-- name: Copy Jenkins-provided kubeconfig to ~/.kube/config
+- name: Copy Jenkins-provided kubeconfig to ~/.kube/config (localhost)
   copy:
+    remote_src: no
     src: "{{ kubeconfig_path }}"
-    dest: "/home/{{ ansible_user_id }}/.kube/config"
-    remote_src: yes
-    owner: "{{ ansible_user_id }}"
+    dest: "/home/{{ lookup('env', 'USER') }}/.kube/config"
+    owner: "{{ lookup('env', 'USER') }}"
     mode: "0600"
 
 - name: Install Docker
