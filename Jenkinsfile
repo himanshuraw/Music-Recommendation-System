@@ -78,7 +78,7 @@ pipeline {
                         echo "Deploying to Kubernetes..."
                         export ANSIBLE_HOST_KEY_CHECKING=False
                         export KUBECONFIG="$KUBECONFIG_FILE"
-                        ansible-playbook -i ansible/inventory-k8s.ini ansible/playbook-k8s.yml \
+                        ansible-playbook -i ansible/inventory.ini ansible/playbook-k8s.yml \
                             --private-key="SSH_KEY"
                     '''
                 }

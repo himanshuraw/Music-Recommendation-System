@@ -1,7 +1,7 @@
 ---
 - name: Deploy using Kubernetes
-  hosts: all
-  became: yes
+  hosts: local
+  become: yes
   vars_file:
     - vault.yml
   vars:
