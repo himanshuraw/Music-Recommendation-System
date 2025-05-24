@@ -10,6 +10,12 @@
     state: directory
     mode: "0755"
 
+- name: Copy kubeconfig from ansible/files
+  copy:
+    src: files/kubeconfig
+    dest: "{{ kubeconfig_path }}"
+    mode: "0600"
+
 - name: Apply Kubernetes manifests in order
   kubernetes.core.k8s:
     state: present
