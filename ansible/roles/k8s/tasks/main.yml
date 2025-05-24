@@ -1,34 +1,14 @@
-- name: Ensure ~/.kube directory exists
-  file:
-    path: "/home/{{ ansible_user_id }}/.kube"
-    state: directory
-    mode: "0755"
-    owner: "{{ ansible_user_id }}"
-
-- name: Install Docker
-  apt:
-    name:
-      - docker.io
-    state: present
-    update_cache: yes
-  when: ansible_os_family == "Debian"
-
 - name: Install Minikube
   get_url:
     url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
     dest: /usr/local/bin/minikube
     mode: "0755"
 
-- name: Start Minikube cluster
-  become: false
-  command: minikube start --driver=docker
-  register: minikube_start
-  changed_when: "'Done!' in minikube_start.stdout"
-
-- name: Wait for Minikube to be ready
-  wait_for:
-    path: "{{ kubeconfig_path }}"
-    timeout: 60
+- name: Ensure kubeconfig directory exists
+  file:
+    path: "{{ kubeconfig_path | dirname }}"
+    state: directory
+    mode: "0755"
 
 - name: Apply Kubernetes manifests in order
   kubernetes.core.k8s:
@@ -38,3 +18,5 @@
   loop: "{{ manifest_order }}"
   loop_control:
     label: "{{ item }}"
+  environment:
+    KUBECONFIG: "{{ kubeconfig_path }}"
