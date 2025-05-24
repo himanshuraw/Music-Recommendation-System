@@ -8,7 +8,7 @@
 
   vars:
     k8s_dir: "{{ playbook_dir }}/../k8s"
-    kubeconfig_path: "{{ kubeconfig_path | default('/home/' + ansible_user + '/.kube/config')"
+    kubeconfig_path: "{{ kubeconfig_path | default('/home/' + ansible_user + '/.kube/config')}}"
     manifest_order:
       - secrets.yaml
       - configmaps.yml

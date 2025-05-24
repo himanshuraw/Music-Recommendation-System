@@ -1,9 +1,9 @@
 - name: Ensure ~/.kube directory exists
   file:
-    path: "/home/{{ ansible_user_id }}/.kube"
+    path: "/home/{{ ansible_user }}/.kube"
     state: directory
-    mode: "0700"
-    owner: "{{ ansible_user_id }}"
+    mode: "0755"
+    owner: "{{ ansible_user }}"
 
 - name: Install Docker
   apt:
